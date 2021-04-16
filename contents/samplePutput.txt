@@ -46,3 +46,10 @@
         },
     'truncated': False
 }
+
+User1: {1:blah1, 2: blah2}
+
+for user in users:
+    #read in user
+    user = #read in file
+    difference = compareLocalAndRemote(local, remote) # {3: blah3}

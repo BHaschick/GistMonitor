@@ -3,12 +3,22 @@ Using the Github API you should query a user’s publicly available github gists
 '''
 import helperFunctions as hf
 
-
-users = ['FiyinfobaO']
-localGists = hf.getUsersStoredGists()
-
+users = ['gwrgergreg', 'Haschick', 'FiyinfobaO', 'subratrout']
+allRemoteGists = {}
+newGists = {}
+localGists = hf.getLocalGists()
+print(localGists)
+'''
 for user in users:
+    
     remoteGists = hf.getUserRemoteGists(user)
-    newGists = hf.compareLocalAndRemoteGists(user, localGists, remoteGists)
-    if len(newGists) > 0:
-        hf.writeResults(user, newGists)
+    
+    if len(remoteGists) == 0:        
+        continue
+
+    allRemoteGists[user] = remoteGists
+    newGists[user] = hf.compareLocalAndRemoteGists(user, localGists, remoteGists)
+    
+hf.displayNewGists(localGists)    #change later to new gists
+#hf.writeOutGists(allRemoteGists)
+'''
