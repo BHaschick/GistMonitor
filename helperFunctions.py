@@ -2,6 +2,7 @@ import json
 import urllib
 from subprocess import call
 from urllib.request import urlopen
+from urllib.error import HTTPError
 import os
 import math
 
@@ -10,8 +11,8 @@ def getUserRemoteGists(user):
 
     try:
         userurl = urlopen('https://api.github.com/users/' + user)
-    except urllib.request.HTTPError:
-        print("user %s was not found" % user)
+    except HTTPError as err:
+        print("Error for user %s: %s" % (user, str(err)))
         return {}
     except:
         print("An error occured in requesting the user: %s" % user)
@@ -44,22 +45,43 @@ def getLocalGists():
     except (FileNotFoundError):
         print("No gists have been previously stored")
         return {}
-    except:
-        print("Something went wrong in getting the stored gists")
+    except Exception as e:
+        print("Something went wrong in getting the stored gists: %s" % e)
 
 def compareLocalAndRemoteGists(user, localGists, remoteGists):
-    pass
+    newGists = []
+    for entry in remoteGists[user]:
+        if entry not in localGists[user]:
+            newGists.append(entry) 
+    return newGists
 
 def writeOutGists(gists):
     try:
         data = json.dumps(gists)
-        with open('./contents/gists.txt', 'w+') as outputFile:
+        with open('./contents/gists.txt', 'w') as outputFile:
             outputFile.writelines(data)
     except Exception as e:
         print("Results could not be written: " + str(e))
 
 def displayNewGists(gists):
     stringBuilder = ""
+    if len(gists) == 0:
+        print("No new gists were found")
+        return
     for user in gists:
         stringBuilder += "User %s has the following new gists:\n" % user
+        for entry in gists[user]:
+            stringBuilder += "\tID: %s, Updated: %s, Accessible via: %s\n" % (entry["id"], entry["updatedAt"], entry["html"])
     print(stringBuilder)
+
+    ### Delete Later ###
+def getFakeRemoteGists():
+    try:
+        with open('./contents/fakeRemoteGists.txt', 'r') as json_file:
+            gists = json.load(json_file)
+        return gists
+    except (FileNotFoundError):
+        print("No gists have been previously stored")
+        return {}
+    except Exception as e:
+        print("Something went wrong in getting the stored gists: %s" % e)
