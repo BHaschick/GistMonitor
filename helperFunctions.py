@@ -14,6 +14,7 @@ def getUserRemoteGists(user):
         userurl = urlopen('https://api.github.com/users/' + user)
     except HTTPError as err:
         print("User %s: %s" % (user, str(err)))
+        input("Press any button to continue.")
         return {}
     except:
         print("An error occured in requesting the user: %s" % user)
@@ -37,33 +38,36 @@ def getUserRemoteGists(user):
             results.append({"id":gist['id'], "updatedAt":gist['updated_at'],"html":gist['html_url']}) #id: [updated,html]
     return results
 
-### Returns dictionary of gists of every user ###
+### Returns dictionary of gists for every existing/stored user ###
 def getLocalGists():
     try:
-        with open('./contents/gists.txt', 'r') as json_file:
+        with open('./gists.txt', 'r') as json_file:
             gists = json.load(json_file)
         return gists
     except (FileNotFoundError):
         print("No gists have been previously stored")
-        with open('./contents/gists.txt', 'w') as outputFile:
-            outputFile.writelines("\{\}")
+        with open('./gists.txt', 'w+') as outputFile:
+            outputFile.writelines("")
         return {}
     except Exception as e:
         print("Something went wrong in getting the stored gists: %s" % e)
 
 def compareLocalAndRemoteGists(user, localGists, remoteGists):
     newGists = []
-    if user not in localGists:
-        return remoteGists
-    for entry in remoteGists:
-        if entry not in localGists[user]:
-            newGists.append(entry) 
-    return newGists
+    try:
+        if user not in localGists:
+            return remoteGists
+        for entry in remoteGists:
+            if entry not in localGists[user]:
+                newGists.append(entry) 
+        return newGists
+    except Exception as e:
+        print("Could not compare local and remote gists. Returned error: %s" % str(e))
 
 def writeOutGists(gists):
     try:
         data = json.dumps(gists)
-        with open('./contents/gists.txt', 'w') as outputFile:
+        with open('./gists.txt', 'w') as outputFile:
             outputFile.writelines(data)
     except Exception as e:
         print("Results could not be written: " + str(e))
@@ -82,14 +86,12 @@ def displayNewGists(gists):
             stringBuilder += "\tID: %s, Updated: %s, Accessible via: %s\n" % (entry["id"], entry["updatedAt"], entry["html"])
     print(stringBuilder)
 
-def getUsers():
+def getUserInput():
     
-    return ['gwrgergreg', 'Haschick', 'FiyinfobaO', 'subratrout']
-
     userInput = str(input("Please enter a username or csv list of usernames: "))
     try:
         if userInput == "":
-            print("Please enter a valid username")
+            print("Please enter a username")
             getUsers()
         if "," in userInput:
             userList=userInput.replace(' ','').split(',')
@@ -97,7 +99,7 @@ def getUsers():
         else:
             return [userInput]
     except:
-        #print("Something went wrong in getting the user. Please start again.")
-        sys.exit("Something went wrong in getting the user. Please start again.")
+        print("Something went wrong in getting the user. Please try again.")
+        getUsers()
    
     
