@@ -1,21 +1,24 @@
 import helperFunctions as hf
 
-users = ['gwrgergreg', 'FiyinfobaO', 'subratrout']
-users = ['FiyinfobaO']
-allRemoteGists = {}
-newGists = {}
-localGists = hf.getLocalGists()
+def main():
 
-for user in users:
+    allRemoteGists = {}
+    newGists = {}
+    localGists = hf.getLocalGists()
+    users = hf.getUsers()
+    for user in users:
+        
+        remoteGists = hf.getUserRemoteGists(user)
+
+        if len(remoteGists) == 0:
+            print("%s has no gists. Removing from the list of users to check." % user)
+            users.remove(user)
+            continue
+
+        allRemoteGists[user] = remoteGists
+        newGists[user] = hf.compareLocalAndRemoteGists(user, localGists, remoteGists)
     
-    #remoteGists = hf.getUserRemoteGists(user)
-    remoteGists = hf.getFakeRemoteGists()    
-    if len(remoteGists) == 0 or (user not in remoteGists):
-        users.remove(user)
-        continue
+    hf.writeOutGists(allRemoteGists)
+    hf.displayNewGists(newGists)
 
-    allRemoteGists[user] = remoteGists
-    #newGists[user] = hf.compareLocalAndRemoteGists(user, localGists, remoteGists)
-  
-#hf.writeOutGists(allRemoteGists)
-hf.displayNewGists(newGists)
+main()
