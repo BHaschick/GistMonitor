@@ -14,7 +14,7 @@ def getUserRemoteGists(user):
         userurl = urlopen('https://api.github.com/users/' + user)
     except HTTPError as err:
         print("User %s: %s" % (user, str(err)))
-        input("Press any button to continue.")
+        #input("Press any button to continue.")
         return {}
     except:
         print("An error occured in requesting the user: %s" % user)

@@ -100,7 +100,7 @@
  [],
  False,
  False,
- 1618735760,
+ 1618735899,
  [('run.exe',
    'c:\\users\\bhasc\\onedrive\\personal\\documents\\repos\\gist-monitor\\.venv\\lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit\\run.exe',
    'EXECUTABLE')])
