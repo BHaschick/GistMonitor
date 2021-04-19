@@ -1,3 +1,4 @@
+# pyinstaller --onefile gistMonitor.py
 import helperFunctions as hf
 
 def main():
@@ -8,19 +9,18 @@ def main():
     users = hf.getUserInput() #Get input from user
     
     for user in users:
-        print("Processing user: %s" % user)
+        print("\nProcessing user: %s" % user)
 
         remoteGists = hf.getUserRemoteGists(user)
 
         if len(remoteGists) == 0:
-            print("%s has no gists. Removing from the list of users to check." % user)
-            users.remove(user)
-            continue
-
-        allRemoteGists[user] = remoteGists 
-        newGists[user] = hf.compareLocalAndRemoteGists(user, localGists, remoteGists)
+            print("%s has no gists." % user)            
+        else:    
+            allRemoteGists[user] = remoteGists 
+            newGists[user] = hf.compareLocalAndRemoteGists(user, localGists, remoteGists)
     
-    hf.writeOutGists(allRemoteGists)
+    allGists = hf.combineLocalAndRemoteGists(localGists, allRemoteGists)
+    hf.writeOutGists(allGists)
     hf.displayNewGists(newGists)
     input("Press any button to continue.")
 

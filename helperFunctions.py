@@ -14,13 +14,12 @@ def getUserRemoteGists(user):
         userurl = urlopen('https://api.github.com/users/' + user)
     except HTTPError as err:
         print("User %s: %s" % (user, str(err)))
-        #input("Press any button to continue.")
         return {}
     except:
         print("An error occured in requesting the user: %s" % user)
         return {}
     
-    perpage = 50.0
+    perpage = 40.0
     public_gists = json.load(userurl)
     gistcount = public_gists['public_gists']
     print ("Found user : " + user)
@@ -102,4 +101,13 @@ def getUserInput():
         print("Something went wrong in getting the user. Please try again.")
         getUsers()
    
-    
+def combineLocalAndRemoteGists(localGists, remoteGists):
+    totalGists = {}
+    for user in remoteGists:
+        if user not in totalGists:
+            totalGists[user] = remoteGists[user]
+    for user in localGists:
+        if user not in remoteGists:
+            totalGists[user] = localGists[user]
+
+    return totalGists
